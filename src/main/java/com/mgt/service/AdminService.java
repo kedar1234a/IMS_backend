@@ -15,6 +15,23 @@ public class AdminService {
 	@Autowired
 	private AdminRepository adminRepository;
 
+	
+	public Admin loginAdminByEmail(String email, String password) {
+        Admin validAdmin = adminRepository.findByEmail(email);
+        if (validAdmin != null && validAdmin.getPassword().matches(password)) {
+            return validAdmin;
+        }
+        return null;
+    }
+	
+	public Admin loginAdminByUsername(String username, String password) {
+        Admin validAdmin = adminRepository.findByUsername(username);
+        if (validAdmin != null && validAdmin.getPassword().matches(password)) {
+            return validAdmin;
+        }
+        return null;
+    }
+	
 	public Admin createAdmin(Admin user) {
 		return adminRepository.save(user);
 	}
@@ -39,4 +56,5 @@ public class AdminService {
 	public List<Admin> getAllAdmin() {
 		return adminRepository.findAll();
 	}
+
 }
