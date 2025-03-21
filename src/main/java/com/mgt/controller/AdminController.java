@@ -1,9 +1,11 @@
 package com.mgt.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mgt.model.Admin;
@@ -27,28 +29,20 @@ public class AdminController {
 	private AdminService adminService;
 
 	//Login Process
-	@PostMapping("/login")
-	public String loginAdmin(@RequestBody Admin admin) {
-	    Admin user = null;
-	    
-	    // Check if username is provided and try login with username
-	    if (admin.getUsername() != null && !admin.getUsername().isEmpty()) {
-	        user = adminService.loginAdminByUsername(admin.getUsername(), admin.getPassword());
+	 @PostMapping("/login")
+	    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+	        String username = credentials.get("username");
+	        String password = credentials.get("password");
+	        
+	        if (adminService.authenticate(username, password)) {
+	            return ResponseEntity.ok(Map.of("message", "Login successful"));
+	        } else {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid credentials"));
+	        }
 	    }
-	    // If username not provided or login failed, try with email
-	    if (user == null && admin.getEmail() != null && !admin.getEmail().isEmpty()) {
-	        user = adminService.loginAdminByEmail(admin.getEmail(), admin.getPassword());
-	    }
-
-	    if (user != null) {
-	        return "Login Successfully";
-	    } else {
-	        return "Login Failed ... Please enter valid username/email and password";
-	    }
-	}
 
 	// Create User
-	@PostMapping("/create")
+	@PostMapping("/register")
 	public Admin createAdmin(@RequestBody Admin admin) {
 		return adminService.createAdmin(admin);
 	}

@@ -1,5 +1,7 @@
 package com.mgt.dao;
 
+
+
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +11,7 @@ import com.mgt.model.Admin;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
-	Admin findByUsername(String username);
+	 Optional<Admin> findByUsername(String username);
 
 	Admin findByEmail(String email);
 }
